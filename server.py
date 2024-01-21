@@ -9,20 +9,25 @@ from EmotionDetection.emotion_detection import emotion_detector
 app = Flask('Emotion Detector')
 
 @app.route("/emotionDetector")
-def process_emotion():
+def run_emotion_detector():
     ''' This code receives the text from the HTML interface and
         runs emotion analysis over it using emotion_detector()
         function. The output returned a dictionary showing the result.
     '''
     text = request.args.get('textToAnalyze')
     response = emotion_detector(text)
-    key = 'dominant_emotion'
 
-    if response.get(key, None) is None:
-        return 'Invalid text! - please try again.'
+    if response['dominant_emotion'] is None:
+        response_text = "Invalid Input! Please try again."
+    else:
+        response_text = f"For the given statement, the system response is 'anger': \
+                        {response['anger']}, 'disgust': {response['disgust']}, \
+                        'fear': {response['fear']}, 'joy': {response['joy']}, \
+                        'sadness': {response['sadness']}. The dominant emotion is \
+                        {response['dominant_emotion']}."
 
-    msg = 'For the given statement, the system response is: ' + str(response)
-    return msg
+    return response_text
+
 
 @app.route("/")
 def render_index_page():
